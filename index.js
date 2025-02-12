@@ -1,15 +1,27 @@
 const express = require('express');
-const { resolve } = require('path');
+const { connectDB } = require('./db');
+const menuRoutes = require('./routes/menuRoutes');
+
 
 const app = express();
-const port = 3010;
+app.use(express.json());
 
-app.use(express.static('static'));
+require('dotenv').config();
+const port = process.env.port || 5000;
+const db_url = process.env.db_url;
+
+app.listen(port, async () => {
+    try {
+        await connectDB(db_url);
+        console.log(`Server running on port ${port}`);
+    } 
+    catch (error) { 
+        console.error(error);
+    }
+}); 
+
+app.use('/api', menuRoutes);
 
 app.get('/', (req, res) => {
-  res.sendFile(resolve(__dirname, 'pages/index.html'));
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+    res.send('Hello World');
 });
